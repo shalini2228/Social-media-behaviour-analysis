@@ -1,0 +1,29 @@
+# Install and load necessary libraries
+install.packages("rtweet")
+install.packages("tidyverse")
+library(rtweet)
+library(tidyverse)
+# Authenticate with Twitter API (you need your own credentials)
+auth <- rtweet::create_token(
+  app = "your_app_name",
+  consumer_key = "your_consumer_key",
+  consumer_secret = "your_consumer_secret",
+  access_token = "your_access_token",
+access_secret = "your_access_secret"
+)
+# Fetch tweets containing a specific hashtag
+tweets <- search_tweets("#DataScience", n = 1000, lang = "en", include_rts = FALSE)
+# Data cleaning
+tweets <- tweets %>%
+  select(screen_name, text, created_at, favorite_count, retweet_count) %>%
+  filter(!is.na(text))
+# Basic analysis
+tweet_summary <- tweets %>%
+  group_by(screen_name) %>%
+  summarise(
+    tweet_count = n(),
+    avg_favorites = mean(favorite_count),
+    avg_retweets = mean(retweet_count)
+  )
+# Print summary
+print(tweet_summary)
